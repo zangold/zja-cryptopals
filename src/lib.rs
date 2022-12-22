@@ -1,5 +1,8 @@
+use itertools::Itertools;
+
 // These modules contain tests corresponding to the tasks provided in the cryptopals challenges.
 mod task01;
+mod task02;
 
 /// Converts a string slice from hex encoding to base64 encoding.
 pub fn hex_to_base64(hex: &str) -> String {
@@ -56,4 +59,39 @@ pub fn hex_to_base64(hex: &str) -> String {
     }
 
     base64
+}
+
+pub fn hex_to_value(c: Option<char>) -> usize {
+    if let Some(x) = c {
+        if ('0'..='9').contains(&x) {
+            x as usize - '0' as usize
+        } else if ('a'..='f').contains(&x) {
+            x as usize - 'a' as usize + 10
+        } else {
+            0
+        }
+    } else {
+        0
+    }
+}
+
+pub fn hex_to_vec(msg: &str) -> Vec<u8> {
+    msg.chars()
+        .batching(|iter| {
+            let (c1, c2) = (iter.next(), iter.next());
+
+            if c1.is_none() && c2.is_none() {
+                None
+            } else {
+                Some(((hex_to_value(c1) << 4) + hex_to_value(c2)) as u8)
+            }
+        })
+        .collect()
+}
+
+/// Takes two equal-length buffers and produces their XOR combination.
+pub fn fixed_xor(a: &[u8], b: &[u8]) -> Vec<u8> {
+    assert_eq!(a.len(), b.len());
+
+    a.iter().zip(b.iter()).map(|(a, b)| a ^ b).collect()
 }
