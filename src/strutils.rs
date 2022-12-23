@@ -48,6 +48,57 @@ pub fn hex_to_base64(hex: &str) -> String {
     base64
 }
 
+/// Converts a single base64 character to an integer (in 0..64).
+pub fn base64_to_value(c: char) -> u8 {
+    match c as u8 {
+        l if (b'A'..=b'Z').contains(&l) => l - b'A',
+        l if (b'a'..=b'z').contains(&l) => l - b'a' + 26,
+        l if (b'0'..=b'9').contains(&l) => l - b'0' + 52,
+        b'+' => 62,
+        b'/' => 63,
+        _ => panic!("Invalid base64 value"),
+    }
+}
+
+/// Converts a (padded) base64 string to its byte representation.
+pub fn base64_to_bytes(base64: &str) -> Vec<u8> {
+    assert!(base64.len() % 4 == 0);
+
+    let mut vec = Vec::<u8>::new();
+
+    let b2v = |x| base64_to_value(x) as usize;
+
+    let mut to_chars = |a, b, c, d| {
+        if c == '=' {
+            // represents 8 bits
+            let v = (b2v(a) << 2) + (b2v(b) >> 4);
+
+            vec.push(v as u8);
+        } else if d == '=' {
+            // represents 16 bits
+            let v = (b2v(a) << 10) + (b2v(b) << 4) + (b2v(c) >> 2);
+
+            vec.push(((v & 0x00ff00) >> 8) as u8);
+            vec.push((v & 0x0000ff) as u8);
+        } else {
+            // represents 24 bits
+            let v = (b2v(a) << 18) + (b2v(b) << 12) + (b2v(c) << 6) + b2v(d);
+
+            vec.push(((v & 0xff0000) >> 16) as u8);
+            vec.push(((v & 0x00ff00) >> 8) as u8);
+            vec.push((v & 0x0000ff) as u8);
+        }
+    };
+
+    let mut it = base64.chars();
+
+    while let (Some(a), Some(b), Some(c), Some(d)) = (it.next(), it.next(), it.next(), it.next()) {
+        to_chars(a, b, c, d);
+    }
+
+    vec
+}
+
 pub fn hex_to_value(c: char) -> u8 {
     if ('0'..='9').contains(&c) {
         c as u8 - b'0'

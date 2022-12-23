@@ -16,7 +16,7 @@ fn example() {
 
     for line in buf_reader.lines() {
         let line = line.unwrap();
-        let (decoded, score) = xor_decode(&hex_to_bytes(&line));
+        let (_, decoded, score) = xor_decode(&hex_to_bytes(&line));
 
         if score > best_score {
             best = line;

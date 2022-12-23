@@ -20,8 +20,11 @@ fn score(msg: &[u8]) -> usize {
         .sum()
 }
 
-pub fn xor_decode(msg: &[u8]) -> (Vec<u8>, usize) {
+/// Attempts to decode msg as a single-byte-xor ciphertext, with a heuristic that favours english
+/// text. Returns a tuple containing the key, the decoded text, and the score it was assigned.
+pub fn xor_decode(msg: &[u8]) -> (u8, Vec<u8>, usize) {
     let mut best = Vec::<u8>::new();
+    let mut best_key = 0;
     let mut best_score = 0;
 
     for key in 0..255 {
@@ -30,11 +33,12 @@ pub fn xor_decode(msg: &[u8]) -> (Vec<u8>, usize) {
 
         if score > best_score {
             best = decoded;
+            best_key = key;
             best_score = score;
         }
     }
 
-    (best, best_score)
+    (best_key, best, best_score)
 }
 
 /// Repeating key xor cipher
@@ -43,4 +47,14 @@ pub fn rep_key_xor(msg: &[u8], key: &[u8]) -> Vec<u8> {
         .enumerate()
         .map(|(index, ch)| ch ^ key[index % key.len()])
         .collect()
+}
+
+/// Find the hamming distance between v1 and v2 (which must be of equal length).
+pub fn hamming_distance(v1: &[u8], v2: &[u8]) -> usize {
+    assert_eq!(v1.len(), v2.len());
+
+    v1.iter()
+        .zip(v2.iter())
+        .map(|(a, b)| (a ^ b).count_ones() as usize)
+        .sum()
 }
