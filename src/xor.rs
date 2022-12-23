@@ -58,3 +58,35 @@ pub fn hamming_distance(v1: &[u8], v2: &[u8]) -> usize {
         .map(|(a, b)| (a ^ b).count_ones() as usize)
         .sum()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::strutils::*;
+
+    #[test]
+    fn test_hamming_distance() {
+        let v1 = string_to_bytes("this is a test");
+        let v2 = string_to_bytes("wokka wokka!!!");
+
+        assert_eq!(hamming_distance(&v1, &v2), 37);
+    }
+
+    #[test]
+    fn test_base64_decode() {
+        assert_eq!(
+            bytes_to_string(&base64_to_bytes("dGhpcyBpcyBhIHRlc3Qgc3RyaW5nCg==")),
+            "this is a test string\n".to_string()
+        );
+
+        assert_eq!(
+            bytes_to_string(&base64_to_bytes("eWV0IGFub3RoZXIgdGVzdCBzdHJpbmcK")),
+            "yet another test string\n".to_string()
+        );
+
+        assert_eq!(
+            bytes_to_string(&base64_to_bytes("eWV0IGFub3RoZXIgYmFzZTY0IHN0cmluZyEhIQo=")),
+            "yet another base64 string!!!\n".to_string()
+        );
+    }
+}
