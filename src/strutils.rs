@@ -51,9 +51,9 @@ pub fn hex_to_base64(hex: &str) -> String {
 /// Converts a single base64 character to an integer (in 0..64).
 pub fn base64_to_value(c: char) -> u8 {
     match c as u8 {
-        l if (b'A'..=b'Z').contains(&l) => l - b'A',
-        l if (b'a'..=b'z').contains(&l) => l - b'a' + 26,
-        l if (b'0'..=b'9').contains(&l) => l - b'0' + 52,
+        l if l.is_ascii_uppercase() => l - b'A',
+        l if l.is_ascii_lowercase() => l - b'a' + 26,
+        l if l.is_ascii_digit() => l - b'0' + 52,
         b'+' => 62,
         b'/' => 63,
         _ => panic!("Invalid base64 value"),
@@ -100,7 +100,7 @@ pub fn base64_to_bytes(base64: &str) -> Vec<u8> {
 }
 
 pub fn hex_to_value(c: char) -> u8 {
-    if ('0'..='9').contains(&c) {
+    if c.is_ascii_digit() {
         c as u8 - b'0'
     } else if ('a'..='f').contains(&c) {
         c as u8 - b'a' + 10

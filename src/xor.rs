@@ -12,8 +12,8 @@ fn try_decode(msg: &[u8], key: u8) -> Vec<u8> {
 fn score(msg: &[u8]) -> usize {
     msg.iter()
         .map(|c| match *c {
-            l if (b'a'..=b'z').contains(&l) => 5,
-            l if (b'A'..=b'Z').contains(&l) => 2,
+            l if l.is_ascii_lowercase() => 5,
+            l if l.is_ascii_uppercase() => 2,
             b' ' => 5,
             _ => 0,
         })

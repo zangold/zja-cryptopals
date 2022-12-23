@@ -16,7 +16,6 @@ fn example() {
     // (usize, float) meaning key_size and normalized hamming distance between the first two blocks
     // of length key_size.
     let mut hd_key_size = (2..80)
-        .into_iter()
         .map(|key_size| {
             (
                 key_size,
