@@ -36,3 +36,11 @@ pub fn xor_decode(msg: &[u8]) -> (Vec<u8>, usize) {
 
     (best, best_score)
 }
+
+/// Repeating key xor cipher
+pub fn rep_key_xor(msg: &[u8], key: &[u8]) -> Vec<u8> {
+    msg.iter()
+        .enumerate()
+        .map(|(index, ch)| ch ^ key[index % key.len()])
+        .collect()
+}

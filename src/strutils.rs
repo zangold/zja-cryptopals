@@ -58,6 +58,21 @@ pub fn hex_to_value(c: char) -> u8 {
     }
 }
 
+/// b must be in 0..16
+pub fn to_hex_char(b: u8) -> char {
+    assert!(b < 16);
+
+    if b < 10 {
+        (b'0' + b) as char
+    } else {
+        (b'a' + b - 10) as char
+    }
+}
+
+pub fn to_hex_chars(b: u8) -> (char, char) {
+    (to_hex_char(b >> 4), to_hex_char(b & 0xf))
+}
+
 pub fn hex_to_bytes(msg: &str) -> Vec<u8> {
     assert!(msg.len() % 2 == 0);
 
@@ -74,4 +89,8 @@ pub fn hex_to_bytes(msg: &str) -> Vec<u8> {
 
 pub fn bytes_to_string(msg: &[u8]) -> String {
     msg.iter().map(|x| *x as char).collect()
+}
+
+pub fn string_to_bytes(msg: &str) -> Vec<u8> {
+    msg.chars().map(|x| x as u8).collect()
 }
