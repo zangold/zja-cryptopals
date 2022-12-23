@@ -72,6 +72,6 @@ pub fn hex_to_bytes(msg: &str) -> Vec<u8> {
         .collect()
 }
 
-pub fn bytes_to_str(msg: &[u8]) -> String {
+pub fn bytes_to_string(msg: &[u8]) -> String {
     msg.iter().map(|x| *x as char).collect()
 }

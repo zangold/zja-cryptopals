@@ -20,7 +20,7 @@ fn score(msg: &[u8]) -> usize {
         .sum()
 }
 
-pub fn xor_decode(msg: &[u8]) -> Vec<u8> {
+pub fn xor_decode(msg: &[u8]) -> (Vec<u8>, usize) {
     let mut best = Vec::<u8>::new();
     let mut best_score = 0;
 
@@ -34,5 +34,5 @@ pub fn xor_decode(msg: &[u8]) -> Vec<u8> {
         }
     }
 
-    best
+    (best, best_score)
 }

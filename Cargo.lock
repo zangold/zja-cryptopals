@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "shared"
+name = "zja-cryptopals"
 version = "0.1.0"
 dependencies = [
  "itertools",
