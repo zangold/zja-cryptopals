@@ -1,9 +1,9 @@
 use crate::xor::*;
 
 /// Implements PKCS#7 padding, as described in challenge 9.
-pub fn pkcs_7_pad(mut block: Vec<u8>, pad_to: usize) -> Vec<u8> {
+pub fn pkcs_7_pad(block: &mut Vec<u8>, pad_to: usize) {
     if block.len() >= pad_to {
-        return block;
+        return;
     }
 
     let pad: u8 = (pad_to - block.len()).try_into().unwrap();
@@ -11,8 +11,6 @@ pub fn pkcs_7_pad(mut block: Vec<u8>, pad_to: usize) -> Vec<u8> {
     while block.len() < pad_to {
         block.push(pad);
     }
-
-    block
 }
 
 pub fn remove_padding(message: &mut Vec<u8>) {
@@ -57,12 +55,14 @@ pub fn aes_128_cbc_decrypt(mut ciphertext: &[u8], key: &[u8]) -> Vec<u8> {
     plaintext
 }
 
-pub fn aes_128_cbc_encrypt(mut plaintext: &[u8], key: &[u8]) -> Vec<u8> {
+pub fn aes_128_cbc_encrypt(mut plaintext: &[u8], key: &[u8], input_iv: &[u8]) -> Vec<u8> {
     const BLOCK_LEN: usize = 16;
 
     assert!(plaintext.len() % BLOCK_LEN == 0);
 
     let mut iv = [0u8; BLOCK_LEN];
+    iv.clone_from_slice(input_iv);
+
     let mut ciphertext = Vec::<u8>::new();
 
     while !plaintext.is_empty() {
@@ -84,8 +84,8 @@ pub fn aes_128_ecb_encrypt(plaintext: &[u8], key: &[u8]) -> Vec<u8> {
     //encrypt(Cipher::aes_128_ecb(), &key, None, &ciphertext).unwrap()
 
     let mut padded_plaintext = plaintext.to_vec();
-    padded_plaintext = pkcs_7_pad(
-        padded_plaintext,
+    pkcs_7_pad(
+        &mut padded_plaintext,
         plaintext.len() + 16 - (plaintext.len() % 16),
     );
 

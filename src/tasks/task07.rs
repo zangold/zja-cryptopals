@@ -47,7 +47,7 @@ fn test_aes_128_cbc() {
     let message = string_to_bytes("yellow submarineYELLOW SUBMARINE");
     let key = string_to_bytes("YELLOW SUBMARINE");
 
-    let ciphertext = aes_128_cbc_encrypt(&message, &key);
+    let ciphertext = aes_128_cbc_encrypt(&message, &key, &[0u8; 16]);
     let plaintext = aes_128_cbc_decrypt(&ciphertext, &key);
 
     println!("ciphertext: {:?}", ciphertext);
